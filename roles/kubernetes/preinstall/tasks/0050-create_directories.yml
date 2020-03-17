@@ -52,7 +52,7 @@
     - "/opt/cni/bin"
     - "/var/lib/calico"
   when:
-    - kube_network_plugin in ["calico", "weave", "canal", "flannel", "contiv", "cilium", "kube-ovn", "kube-router", "macvlan"]
+    - kube_network_plugin in ["calico", "weave", "canal", "flannel", "contiv", "cilium", "kube-ovn", "kube-router", "macvlan", "ncp"]
     - inventory_hostname in groups['k8s-cluster']
   tags:
     - network
