@@ -22,7 +22,7 @@
 
 - name: Stop if unknown network plugin
   assert:
-    that: kube_network_plugin in ['calico', 'canal', 'flannel', 'weave', 'cloud', 'cilium', 'cni', 'contiv', 'kube-ovn', 'kube-router', 'macvlan']
+    that: kube_network_plugin in ['calico', 'canal', 'flannel', 'weave', 'cloud', 'cilium', 'cni', 'contiv', 'kube-ovn', 'kube-router', 'macvlan', 'ncp']
     msg: "{{ kube_network_plugin }} is not supported"
   when: kube_network_plugin is defined
   ignore_errors: "{{ ignore_assert_errors }}"
@@ -248,3 +248,11 @@
     that: kubeadm_control_plane
     msg: "kubeadm etcd mode requires experimental control plane"
   when: etcd_kubeadm_enabled
+
+- name: Stop if OS is incompatible with NCP
+  assert:
+    that: ansible_os_family in ['RedHat', 'CentOS', 'Fedora', 'Ubuntu', 'Debian']
+    msg: "{{ ansible_os_family }} is not compatible with ncp network plugin"
+  ignore_errors: "{{ ignore_assert_errors }}"
+  when:
+    - kube_network_plugin == 'ncp'

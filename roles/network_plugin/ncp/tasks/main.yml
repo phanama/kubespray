@@ -1,0 +1,25 @@
+---
+- name: NCP | Set cni directory permissions
+  file:
+    path: /opt/cni/bin
+    state: directory
+    owner: kube
+    recurse: true
+    mode: 0755
+
+- name: NCP | Copy cni plugins
+  unarchive:
+    src: "{{ local_release_dir }}/cni-plugins-linux-{{ image_arch }}-{{ cni_version }}.tgz"
+    dest: "/opt/cni/bin"
+    mode: 0755
+    remote_src: yes
+
+- name: NCP | Create NCP manifests
+  template:
+    src: "{{ item.file }}.j2"
+    dest: "{{ kube_config_dir }}/{{ item.file }}"
+  with_items:
+    - {name: ncp, file: ncp.yml, type: ncp}
+  register: ncp_node_manifests
+  when:
+    - inventory_hostname in groups['kube-master']

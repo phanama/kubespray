@@ -1,0 +1,20 @@
+---
+- name: NCP | Start Resources
+  kube:
+    name: "{{ item.item.name }}"
+    namespace: "nsx-system"
+    kubectl: "{{ bin_dir }}/kubectl"
+    resource: "{{ item.item.type }}"
+    filename: "{{ kube_config_dir }}/{{ item.item.file }}"
+    state: "latest"
+  with_items: "{{ ncp_node_manifests.results }}"
+  when: inventory_hostname == groups['kube-master'][0] and not item is skipped
+
+- name: NCP | Wait for pods to run
+  command: "{{ bin_dir }}/kubectl -n nsx-system get pods -l tier=nsx-networking -o jsonpath='{.items[?(@.status.containerStatuses[0].ready==false)].metadata.name}'"  # noqa 601
+  register: pods_not_ready
+  until: pods_not_ready.stdout.find("ncp")==-1
+  retries: 30
+  delay: 10
+  ignore_errors: yes
+  when: inventory_hostname == groups['kube-master'][0]

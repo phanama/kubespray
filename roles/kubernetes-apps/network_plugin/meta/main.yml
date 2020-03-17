@@ -45,6 +45,11 @@ dependencies:
     tags:
       - kube-router
 
+  - role: kubernetes-apps/network_plugin/ncp
+    when: kube_network_plugin == 'ncp'
+    tags:
+      - ncp
+      
   - role: kubernetes-apps/network_plugin/multus
     when: kube_network_plugin_multus
     tags:
