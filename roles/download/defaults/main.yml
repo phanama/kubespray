@@ -493,6 +493,8 @@ cert_manager_controller_image_tag: "{{ cert_manager_version }}"
 addon_resizer_version: "1.8.8"
 addon_resizer_image_repo: "{{ kube_image_repo }}/addon-resizer"
 addon_resizer_image_tag: "{{ addon_resizer_version }}"
+ncp_image_repo: "{{ ncp_container_registry }}/{{ ncp_container_repository }}/{{ ncp_container_image }}"
+ncp_image_tag: "{{ ncp_container_tag }}"
 
 cinder_csi_attacher_image_repo: "{{ quay_image_repo }}/k8scsi/csi-attacher"
 cinder_csi_attacher_image_tag: "v1.2.1"
@@ -663,6 +665,21 @@ downloads:
     repo: "{{ flannel_image_repo }}"
     tag: "{{ flannel_image_tag }}"
     sha256: "{{ flannel_digest_checksum|default(None) }}"
+    groups:
+      - k8s-cluster
+
+  ncp:
+    enabled: "{{ kube_network_plugin == 'ncp' }}"
+    container: true
+    tar: true
+    repo: "{{ ncp_image_repo }}"
+    tag: "{{ ncp_image_tag }}"
+    url: "{{ ncp_tar_image_url }}"
+    username: "{{ ncp_tar_image_url_username }}"
+    password: "{{ ncp_tar_image_url_password }}"
+    dest: "{{local_release_dir}}/ncp.tar"
+    sha256: "{{ ncp_tar_digest_checksum|default(None) }}"
+    mode: "0644"
     groups:
       - k8s-cluster
 
