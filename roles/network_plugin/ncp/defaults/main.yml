@@ -1,6 +1,16 @@
-# ncp_container_repository: 
+# ncp_container_registry:
 # ncp_container_image: nsx-ncp-ubuntu
 # ncp_container_tag
+
+# ncp_container_registry:
+# ncp_container_repository:
+# ncp_container_image:
+# ncp_container_tag:
+
+# ncp_tar_image_url:
+# ncp_tar_image_url_username:
+# ncp_tar_image_url_password:
+# ncp_tar_digest_checksum:
 
 # [DEFAULT]
 # If set to true, the logging level will be set to DEBUG instead of the
