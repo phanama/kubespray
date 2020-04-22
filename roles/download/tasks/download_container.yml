@@ -126,6 +126,20 @@
         - pull_required | default(download_always_pull)
         - image_is_tar
 
+    - name: download_container | Tag image after docker loading
+      shell: |
+        export ORIGINAL_TAG="$(echo "{{ container_load_status.stdout }}" | grep "Loaded image" | awk '{print $3}')"
+        {{ docker_bin_dir }}/docker tag "$ORIGINAL_TAG" "{{ ncp_container_registry }}/{{ ncp_container_repository }}/{{ ncp_container_image }}:{{ ncp_container_tag }}"
+      delegate_to: "{{ download_delegate if download_run_once else inventory_hostname }}"
+      run_once: "{{ download_run_once }}"
+      register: container_tag_status
+      failed_when: container_tag_status | failed
+      become: "{{ user_can_become_root | default(false) or not (download_run_once and download_localhost) }}"
+      when:
+        - pull_required
+        - image_is_tar
+        - container_load_status | succeeded
+
     # NOTE: image_changed is only valid if a pull is was needed or forced.
     - name: download_container | Check if image changed
       set_fact:
